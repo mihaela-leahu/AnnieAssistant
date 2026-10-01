@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import {
     FlatList,
     KeyboardAvoidingView,
@@ -15,6 +15,7 @@ import {ThemedView} from '@/components/themed-view';
 import {BottomTabInset, Colors, Spacing} from '@/constants/theme';
 import {addTask, deleteTask, toggleTask} from '@/tasks/tasks';
 import {Task} from '@/tasks/types';
+import { loadTasks, saveTasks } from '@/tasks/storage';
 
 export default function TasksScreen() {
     const scheme = useColorScheme();
@@ -22,6 +23,18 @@ export default function TasksScreen() {
 
     const [tasks, setTasks] = useState<Task[]>([]);
     const [input, setInput] = useState('');
+    const [loaded, setLoaded] = useState(false);
+
+    useEffect(() => {
+        loadTasks().then((saved) => {
+            setTasks(saved);
+            setLoaded(true);
+        });
+    }, []);
+
+    useEffect(() => {
+        if (loaded) saveTasks(tasks);
+    }, [tasks, loaded]);
 
     function add() {
         setTasks((prev) => addTask(prev, input, Date.now().toString()));
