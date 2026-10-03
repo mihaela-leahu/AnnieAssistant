@@ -1,4 +1,4 @@
-import {useState, useEffect} from 'react';
+import {useState} from 'react';
 import {
     FlatList,
     KeyboardAvoidingView,
@@ -13,31 +13,17 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import {ThemedText} from '@/components/themed-text';
 import {ThemedView} from '@/components/themed-view';
 import {BottomTabInset, Colors, Spacing} from '@/constants/theme';
-import {addTask, deleteTask, toggleTask} from '@/tasks/tasks';
-import {Task} from '@/tasks/types';
-import { loadTasks, saveTasks } from '@/tasks/storage';
+import {useTasks} from '@/tasks/TaskContext';
 
 export default function TasksScreen() {
     const scheme = useColorScheme();
     const colors = Colors[scheme === 'unspecified' ? 'light' : scheme];
 
-    const [tasks, setTasks] = useState<Task[]>([]);
+    const {tasks, add, toggle, remove} = useTasks();
     const [input, setInput] = useState('');
-    const [loaded, setLoaded] = useState(false);
 
-    useEffect(() => {
-        loadTasks().then((saved) => {
-            setTasks(saved);
-            setLoaded(true);
-        });
-    }, []);
-
-    useEffect(() => {
-        if (loaded) saveTasks(tasks);
-    }, [tasks, loaded]);
-
-    function add() {
-        setTasks((prev) => addTask(prev, input, Date.now().toString()));
+    function onAdd() {
+        add(input);
         setInput('');
     }
 
@@ -57,13 +43,13 @@ export default function TasksScreen() {
                             <ThemedView type="backgroundElement" style={styles.row}>
                                 <Pressable
                                     style={styles.flex}
-                                    onPress={() => setTasks((prev) => toggleTask(prev, item.id))}>
+                                    onPress={() => toggle(item.id)}>
                                     <ThemedText
                                         style={item.done ? styles.done : undefined}>
                                         {item.title}
                                     </ThemedText>
                                 </Pressable>
-                                <Pressable onPress={() => setTasks((prev) => deleteTask(prev, item.id))}>
+                                <Pressable onPress={() => remove(item.id)}>
                                     <ThemedText>✕</ThemedText>
                                 </Pressable>
                             </ThemedView>
@@ -77,12 +63,12 @@ export default function TasksScreen() {
                             ]}
                             value={input}
                             onChangeText={setInput}
-                            onSubmitEditing={add}
+                            onSubmitEditing={onAdd}
                             placeholder="New task..."
                             placeholderTextColor={colors.text}
                             returnKeyType="done"
                         />
-                        <Pressable onPress={add} style={styles.addButton}>
+                        <Pressable onPress={onAdd} style={styles.addButton}>
                             <ThemedText>Add</ThemedText>
                         </Pressable>
                     </ThemedView>
