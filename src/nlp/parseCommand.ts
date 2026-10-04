@@ -3,7 +3,8 @@ export type Command =
     | { type: 'complete'; title: string }
     | { type: 'delete'; title: string }
     | { type: 'list' }
-    | { type: 'unknown' };
+    | { type: 'unknown' }
+    | { type: 'briefing' };
 
 export function parseCommand(input: string): Command {
     const text = input.trim();
@@ -24,6 +25,8 @@ export function parseCommand(input: string): Command {
     ) {
         return { type: 'list' };
     }
-
+    if (/^(?:brief me|(?:morning )?briefing|my day)$/i.test(text)) {
+        return { type: 'briefing' };
+    }
     return { type: 'unknown' };
 }
