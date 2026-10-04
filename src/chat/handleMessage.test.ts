@@ -58,4 +58,8 @@ describe('handleMessage', () => {
             title: 'water plants',
         });
     });
+    it('gives a briefing', () => {
+        const reply = handleMessage('briefing', tasks, makeActions(), 8);
+        expect(reply).toBe('Good morning! You have 1 task today:\n• Buy milk');
+    });
 });

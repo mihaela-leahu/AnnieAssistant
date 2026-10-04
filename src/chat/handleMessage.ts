@@ -1,5 +1,6 @@
 import { parseCommand } from '../nlp/parseCommand';
 import { Task } from '../tasks/types';
+import { buildBriefing } from '../briefing/buildBriefing';
 
 export type TaskActions = {
     add: (title: string) => void;
@@ -15,7 +16,12 @@ function findTask(tasks: Task[], title: string): Task | undefined {
     );
 }
 
-export function handleMessage(text: string, tasks: Task[], actions: TaskActions): string {
+export function handleMessage(
+    text: string,
+    tasks: Task[],
+    actions: TaskActions,
+    hour: number = new Date().getHours(),
+): string {
     const command = parseCommand(text);
 
     switch (command.type) {
@@ -44,6 +50,8 @@ export function handleMessage(text: string, tasks: Task[], actions: TaskActions)
             if (pending.length === 0) return 'All your tasks are done.';
             return `You have ${pending.length} left:\n` + pending.map((t) => `• ${t.title}`).join('\n');
         }
+        case 'briefing':
+            return buildBriefing(tasks, hour);
 
         default:
             return 'Sorry, I didn\'t get that. Try: "add buy milk", "done buy milk", "delete buy milk" or "show my tasks".';
