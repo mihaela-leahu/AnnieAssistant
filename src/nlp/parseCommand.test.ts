@@ -28,4 +28,11 @@ describe('parseCommand', () => {
     it('returns unknown for add with no title', () => {
         expect(parseCommand('add')).toEqual({ type: 'unknown' });
     });
+
+    it('parses "add task" and keeps only the title', () => {
+        expect(parseCommand('add task water plants')).toEqual({
+            type: 'add',
+            title: 'water plants',
+        });
+    });
 });
