@@ -14,12 +14,15 @@ import {ThemedText} from '@/components/themed-text';
 import {ThemedView} from '@/components/themed-view';
 import {BottomTabInset, Colors, Spacing} from '@/constants/theme';
 import {getGreeting} from '@/shared/greetings';
+import { handleMessage } from '@/chat/handleMessage';
+import { useTasks } from '@/tasks/TaskContext';
 
 type Message = { id: string; text: string; from: 'user' | 'bot' };
 
 export default function ChatScreen() {
     const scheme = useColorScheme();
     const colors = Colors[scheme === 'unspecified' ? 'light' : scheme];
+    const { tasks, add, toggle, remove } = useTasks();
 
     const [input, setInput] = useState('');
     const [messages, setMessages] = useState<Message[]>([
@@ -34,10 +37,11 @@ export default function ChatScreen() {
         const text = input.trim();
         if (!text) return;
         const id = Date.now().toString();
+        const reply = handleMessage(text, tasks, { add, toggle, remove });
         setMessages((prev) => [
             ...prev,
-            {id, text, from: 'user'},
-            {id: id + 'b', text: `You said: ${text}`, from: 'bot'}, // placeholder reply
+            { id, text, from: 'user' },
+            { id: id + 'b', text: reply, from: 'bot' },
         ]);
         setInput('');
     }
