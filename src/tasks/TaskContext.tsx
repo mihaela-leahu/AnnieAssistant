@@ -3,6 +3,7 @@ import { createContext, ReactNode, useContext, useEffect, useState } from 'react
 import { loadTasks, saveTasks } from './storage';
 import { addTask, deleteTask, toggleTask } from './tasks';
 import { Task } from './types';
+import { scheduleBriefing } from '../briefing/notifications';
 
 type TasksContextValue = {
     tasks: Task[];
@@ -26,6 +27,9 @@ export function TasksProvider({ children }: { children: ReactNode }) {
 
     useEffect(() => {
         if (loaded) saveTasks(tasks);
+    }, [tasks, loaded]);
+    useEffect(() => {
+        if (loaded) scheduleBriefing(tasks);
     }, [tasks, loaded]);
 
     const value: TasksContextValue = {
