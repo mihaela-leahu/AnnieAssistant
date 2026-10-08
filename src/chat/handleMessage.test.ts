@@ -7,7 +7,8 @@ const tasks = [
 ];
 
 function makeActions() {
-    return { add: jest.fn(), toggle: jest.fn(), remove: jest.fn() };
+    //setBriefingTime: jest.fn()
+    return { add: jest.fn(), toggle: jest.fn(), remove: jest.fn(), setBriefingTime: jest.fn() };;
 }
 
 describe('handleMessage', () => {
@@ -67,5 +68,11 @@ describe('handleMessage', () => {
         const reply = handleMessage('add buy bread tomorrow', tasks, actions, new Date(2026, 9, 5, 10, 0));
         expect(actions.add).toHaveBeenCalledWith('buy bread', '2026-10-06');
         expect(reply).toBe('Added "buy bread" (due 2026-10-06).');
+    });
+    it('sets the briefing time', () => {
+        const actions = makeActions();
+        const reply = handleMessage('set briefing 7:30', tasks, actions);
+        expect(actions.setBriefingTime).toHaveBeenCalledWith(7, 30);
+        expect(reply).toBe("Okay, I'll send your briefing at 07:30 every day.");
     });
 });
