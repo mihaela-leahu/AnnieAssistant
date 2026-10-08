@@ -35,4 +35,13 @@ describe('parseCommand', () => {
             title: 'water plants',
         });
     });
+    it('parses setting the briefing time', () => {
+        expect(parseCommand('set briefing 7:30')).toEqual({ type: 'setBriefingTime', hour: 7, minute: 30 });
+        expect(parseCommand('set briefing time to 9')).toEqual({ type: 'setBriefingTime', hour: 9, minute: 0 });
+        expect(parseCommand('briefing at 06:45')).toEqual({ type: 'setBriefingTime', hour: 6, minute: 45 });
+    });
+
+    it('rejects an impossible briefing time', () => {
+        expect(parseCommand('set briefing 25:00')).toEqual({ type: 'unknown' });
+    });
 });

@@ -4,6 +4,7 @@ export type Command =
     | { type: 'delete'; title: string }
     | { type: 'list' }
     | { type: 'unknown' }
+    | { type: 'setBriefingTime'; hour: number; minute: number }
     | { type: 'briefing' };
 
 export function parseCommand(input: string): Command {
@@ -27,6 +28,14 @@ export function parseCommand(input: string): Command {
     }
     if (/^(?:brief me|(?:morning )?briefing|my day)$/i.test(text)) {
         return { type: 'briefing' };
+    }
+    const setTime = text.match(
+        /^(?:set briefing(?: time)?(?: to)?|briefing at)\s+(\d{1,2})(?::(\d{2}))?$/i,
+    );
+    if (setTime) {
+        const hour = Number(setTime[1]);
+        const minute = setTime[2] ? Number(setTime[2]) : 0;
+        if (hour <= 23 && minute <= 59) return { type: 'setBriefingTime', hour, minute };
     }
     return { type: 'unknown' };
 }

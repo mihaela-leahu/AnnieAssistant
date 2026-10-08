@@ -16,6 +16,7 @@ import {BottomTabInset, Colors, Spacing} from '@/constants/theme';
 import {getGreeting} from '@/shared/greetings';
 import { handleMessage } from '@/chat/handleMessage';
 import { useTasks } from '@/tasks/TaskContext';
+import { useSettings } from '@/Settings/settingsContext';
 
 type Message = { id: string; text: string; from: 'user' | 'bot' };
 
@@ -23,7 +24,7 @@ export default function ChatScreen() {
     const scheme = useColorScheme();
     const colors = Colors[scheme === 'unspecified' ? 'light' : scheme];
     const { tasks, add, toggle, remove } = useTasks();
-
+    const { setBriefingTime } = useSettings();
     const [input, setInput] = useState('');
     const [messages, setMessages] = useState<Message[]>([
         {
@@ -37,7 +38,7 @@ export default function ChatScreen() {
         const text = input.trim();
         if (!text) return;
         const id = Date.now().toString();
-        const reply = handleMessage(text, tasks, { add, toggle, remove });
+        const reply = handleMessage(text, tasks, { add, toggle, remove, setBriefingTime });
         setMessages((prev) => [
             ...prev,
             { id, text, from: 'user' },
