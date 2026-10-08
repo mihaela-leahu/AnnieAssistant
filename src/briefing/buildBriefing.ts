@@ -1,11 +1,14 @@
+import { formatDate } from '../nlp/extractDue';
 import { getGreeting } from '../shared/greetings';
 import { Task } from '../tasks/types';
 
 const MAX_SHOWN = 5;
 
-export function buildBriefing(tasks: Task[], hour: number): string {
-    const greeting = getGreeting(hour);
-    const pending = tasks.filter((t) => !t.done);
+export function buildBriefing(tasks: Task[], now: Date): string {
+    const greeting = getGreeting(now.getHours());
+    const today = formatDate(now);
+    // pending tasks that are undated, due today, or overdue
+    const pending = tasks.filter((t) => !t.done && (!t.due || t.due <= today));
 
     if (pending.length === 0) {
         return `${greeting}! You have no tasks for today. Enjoy your day!`;

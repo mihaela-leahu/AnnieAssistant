@@ -14,6 +14,7 @@ import {ThemedText} from '@/components/themed-text';
 import {ThemedView} from '@/components/themed-view';
 import {BottomTabInset, Colors, Spacing} from '@/constants/theme';
 import {useTasks} from '@/tasks/TaskContext';
+import {extractDue} from '@/nlp/extractDue';
 
 export default function TasksScreen() {
     const scheme = useColorScheme();
@@ -23,7 +24,8 @@ export default function TasksScreen() {
     const [input, setInput] = useState('');
 
     function onAdd() {
-        add(input);
+        const {title, due} = extractDue(input, new Date());
+        add(title, due);
         setInput('');
     }
 
@@ -48,6 +50,7 @@ export default function TasksScreen() {
                                         style={item.done ? styles.done : undefined}>
                                         {item.title}
                                     </ThemedText>
+                                    {item.due ? <ThemedText type="small">due {item.due}</ThemedText> : null}
                                 </Pressable>
                                 <Pressable onPress={() => remove(item.id)}>
                                     <ThemedText>✕</ThemedText>

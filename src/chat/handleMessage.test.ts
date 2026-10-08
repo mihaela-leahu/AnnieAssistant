@@ -14,7 +14,7 @@ describe('handleMessage', () => {
     it('adds a task', () => {
         const actions = makeActions();
         const reply = handleMessage('add water plants', tasks, actions);
-        expect(actions.add).toHaveBeenCalledWith('water plants');
+        expect(actions.add).toHaveBeenCalledWith('water plants', undefined);
         expect(reply).toBe('Added "water plants".');
     });
 
@@ -59,7 +59,13 @@ describe('handleMessage', () => {
         });
     });
     it('gives a briefing', () => {
-        const reply = handleMessage('briefing', tasks, makeActions(), 8);
+        const reply = handleMessage('briefing', tasks, makeActions(), new Date(2026, 9, 5, 8, 0));
         expect(reply).toBe('Good morning! You have 1 task today:\n• Buy milk');
+    });
+    it('adds a task with a due date', () => {
+        const actions = makeActions();
+        const reply = handleMessage('add buy bread tomorrow', tasks, actions, new Date(2026, 9, 5, 10, 0));
+        expect(actions.add).toHaveBeenCalledWith('buy bread', '2026-10-06');
+        expect(reply).toBe('Added "buy bread" (due 2026-10-06).');
     });
 });
