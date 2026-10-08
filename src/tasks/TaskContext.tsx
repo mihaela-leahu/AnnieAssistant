@@ -7,7 +7,7 @@ import { scheduleBriefing } from '../briefing/notifications';
 
 type TasksContextValue = {
     tasks: Task[];
-    add: (title: string) => void;
+    add: (title: string, due?: string) => void;
     toggle: (id: string) => void;
     remove: (id: string) => void;
 };
@@ -34,7 +34,7 @@ export function TasksProvider({ children }: { children: ReactNode }) {
 
     const value: TasksContextValue = {
         tasks,
-        add: (title) => setTasks((prev) => addTask(prev, title, Date.now().toString())),
+        add: (title, due) => setTasks((prev) => addTask(prev, title, Date.now().toString(), due)),
         toggle: (id) => setTasks((prev) => toggleTask(prev, id)),
         remove: (id) => setTasks((prev) => deleteTask(prev, id)),
     };

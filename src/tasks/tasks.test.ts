@@ -19,4 +19,9 @@ describe('tasks', () => {
         const start = addTask([], 'Buy milk', '1');
         expect(deleteTask(start, '1')).toEqual([]);
     });
+    it('adds a task with a due date', () => {
+        expect(addTask([], 'Buy milk', '1', '2026-10-06')).toEqual([
+            { id: '1', title: 'Buy milk', done: false, due: '2026-10-06' },
+        ]);
+    });
 });

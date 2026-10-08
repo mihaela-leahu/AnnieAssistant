@@ -27,7 +27,7 @@ export async function scheduleBriefing(tasks: Task[]): Promise<void> {
         await Notifications.scheduleNotificationAsync({
             content: {
                 title: 'Morning briefing',
-                body: buildBriefing(tasks, when.getHours()),
+                body: buildBriefing(tasks, when),
             },
             trigger: {
                 type: Notifications.SchedulableTriggerInputTypes.DATE,

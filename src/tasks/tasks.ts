@@ -1,11 +1,10 @@
 import { Task } from './types';
 
-export function addTask(tasks: Task[], title: string, id: string): Task[] {
+export function addTask(tasks: Task[], title: string, id: string, due?: string): Task[] {
     const clean = title.trim();
     if (!clean) return tasks;
-    return [...tasks, { id, title: clean, done: false }];
+    return [...tasks, { id, title: clean, done: false, ...(due ? { due } : {}) }];
 }
-
 export function toggleTask(tasks: Task[], id: string): Task[] {
     return tasks.map((t) => (t.id === id ? { ...t, done: !t.done } : t));
 }

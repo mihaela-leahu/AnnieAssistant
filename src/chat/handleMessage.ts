@@ -1,9 +1,10 @@
+import { buildBriefing } from '../briefing/buildBriefing';
+import { extractDue } from '../nlp/extractDue';
 import { parseCommand } from '../nlp/parseCommand';
 import { Task } from '../tasks/types';
-import { buildBriefing } from '../briefing/buildBriefing';
 
 export type TaskActions = {
-    add: (title: string) => void;
+    add: (title: string, due?: string) => void;
     toggle: (id: string) => void;
     remove: (id: string) => void;
 };
@@ -20,14 +21,16 @@ export function handleMessage(
     text: string,
     tasks: Task[],
     actions: TaskActions,
-    hour: number = new Date().getHours(),
+    now: Date = new Date(),
 ): string {
     const command = parseCommand(text);
 
     switch (command.type) {
-        case 'add':
-            actions.add(command.title);
-            return `Added "${command.title}".`;
+        case 'add': {
+            const { title, due } = extractDue(command.title, now);
+            actions.add(title, due);
+            return due ? `Added "${title}" (due ${due}).` : `Added "${title}".`;
+        }
 
         case 'complete': {
             const task = findTask(tasks, command.title);
@@ -50,10 +53,11 @@ export function handleMessage(
             if (pending.length === 0) return 'All your tasks are done.';
             return `You have ${pending.length} left:\n` + pending.map((t) => `• ${t.title}`).join('\n');
         }
+
         case 'briefing':
-            return buildBriefing(tasks, hour);
+            return buildBriefing(tasks, now);
 
         default:
-            return 'Sorry, I didn\'t get that. Try: "add buy milk", "done buy milk", "delete buy milk" or "show my tasks".';
+            return 'Sorry, I didn\'t get that. Try: "add buy milk tomorrow", "done buy milk", "delete buy milk", "show my tasks" or "briefing".';
     }
 }
