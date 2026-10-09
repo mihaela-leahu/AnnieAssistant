@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {
     FlatList,
     KeyboardAvoidingView,
@@ -17,8 +17,10 @@ import {getGreeting} from '@/shared/greetings';
 import { handleMessage } from '@/chat/handleMessage';
 import { useTasks } from '@/tasks/TaskContext';
 import { useSettings } from '@/Settings/settingsContext';
+import {loadMessages, saveMessages} from '@/chat/storage';
+import {Message} from '@/chat/types';
 
-type Message = { id: string; text: string; from: 'user' | 'bot' };
+
 
 export default function ChatScreen() {
     const scheme = useColorScheme();
@@ -26,17 +28,34 @@ export default function ChatScreen() {
     const { tasks, add, toggle, remove } = useTasks();
     const { setBriefingTime } = useSettings();
     const [input, setInput] = useState('');
-    const [messages, setMessages] = useState<Message[]>([
-        {
-            id: '0',
-            text: `${getGreeting(new Date().getHours())}! How can I help?`,
-            from: 'bot',
-        },
-    ]);
+    const [messages, setMessages] = useState<Message[]>([]);
+    const [loaded, setLoaded] = useState(false);
+    const listRef = useRef<FlatList<Message>>(null);
+
+    useEffect(() => {
+        loadMessages().then((saved) => {
+            setMessages(
+                saved.length > 0
+                    ? saved
+                    : [
+                        {
+                            id: '0',
+                            text: `${getGreeting(new Date().getHours())}! How can I help?`,
+                            from: 'bot',
+                        },
+                    ],
+            );
+            setLoaded(true);
+        });
+    }, []);
+
+    useEffect(() => {
+        if (loaded) saveMessages(messages);
+    }, [messages, loaded]);
 
     function send() {
         const text = input.trim();
-        if (!text) return;
+        if (!text || !loaded) return;
         const id = Date.now().toString();
         const reply = handleMessage(text, tasks, { add, toggle, remove, setBriefingTime });
         setMessages((prev) => [
@@ -56,6 +75,8 @@ export default function ChatScreen() {
                     <FlatList
                         style={styles.flex}
                         data={messages}
+                        ref={listRef}
+                        onContentSizeChange={() => listRef.current?.scrollToEnd({animated: false})}
                         keyExtractor={(m) => m.id}
                         contentContainerStyle={styles.list}
                         renderItem={({item}) => (
