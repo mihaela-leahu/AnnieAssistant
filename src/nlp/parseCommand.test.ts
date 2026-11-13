@@ -44,4 +44,12 @@ describe('parseCommand', () => {
     it('rejects an impossible briefing time', () => {
         expect(parseCommand('set briefing 25:00')).toEqual({ type: 'unknown' });
     });
+    it('parses clear chat', () => {
+        expect(parseCommand('clear chat')).toEqual({ type: 'clearChat' });
+        expect(parseCommand('Delete the conversation')).toEqual({ type: 'clearChat' });
+    });
+
+    it('still parses deleting a task', () => {
+        expect(parseCommand('delete buy milk')).toEqual({ type: 'delete', title: 'buy milk' });
+    });
 });

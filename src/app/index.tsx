@@ -53,15 +53,19 @@ export default function ChatScreen() {
         if (loaded) saveMessages(messages);
     }, [messages, loaded]);
 
+    function clearChat() {
+        setMessages([]);
+    }
+
     function send() {
         const text = input.trim();
         if (!text || !loaded) return;
         const id = Date.now().toString();
-        const reply = handleMessage(text, tasks, { add, toggle, remove, setBriefingTime });
+        const reply = handleMessage(text, tasks, {add, toggle, remove, setBriefingTime, clearChat});
         setMessages((prev) => [
             ...prev,
-            { id, text, from: 'user' },
-            { id: id + 'b', text: reply, from: 'bot' },
+            {id, text, from: 'user'},
+            {id: id + 'b', text: reply, from: 'bot'},
         ]);
         setInput('');
     }
