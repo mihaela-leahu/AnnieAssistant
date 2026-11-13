@@ -9,6 +9,7 @@ export type TaskActions = {
     toggle: (id: string) => void;
     remove: (id: string) => void;
     setBriefingTime: (hour: number, minute: number) => void;
+    clearChat: () => void;
 };
 
 function findTask(tasks: Task[], title: string): Task | undefined {
@@ -60,6 +61,9 @@ export function handleMessage(
             const time = formatTime({ hour: command.hour, minute: command.minute });
             return `Okay, I'll send your briefing at ${time} every day.`;
         }
+        case 'clearChat':
+            actions.clearChat();
+            return 'Chat cleared. Your tasks are untouched.';
 
         case 'briefing':
             return buildBriefing(tasks, now);

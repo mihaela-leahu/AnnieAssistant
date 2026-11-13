@@ -5,10 +5,15 @@ export type Command =
     | { type: 'list' }
     | { type: 'unknown' }
     | { type: 'setBriefingTime'; hour: number; minute: number }
+    | { type: 'clearChat' }
     | { type: 'briefing' };
+
 
 export function parseCommand(input: string): Command {
     const text = input.trim();
+    if (/^(?:clear|reset|delete)\s+(?:the\s+|my\s+)?(?:chat|history|conversation)$/i.test(text)) {
+        return { type: 'clearChat' };
+    }
 
     const add = text.match(/^(?:add task|add|remind me to|i need to)\s+(.+)$/i);
     if (add) return { type: 'add', title: add[1].trim() };
