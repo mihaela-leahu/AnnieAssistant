@@ -52,7 +52,7 @@ Ideas for later versions: appointments and schedule, step and pulse tracking, vo
 
 ### Prerequisites
 
-- Node.js 20+
+- Node.js 22+
 - The **Expo Go** app on your iPhone (App Store)
 - Phone and computer on the same Wi-Fi network
 

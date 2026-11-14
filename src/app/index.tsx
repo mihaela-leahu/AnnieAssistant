@@ -24,7 +24,7 @@ import {Message} from '@/chat/types';
 
 export default function ChatScreen() {
     const scheme = useColorScheme();
-    const colors = Colors[scheme === 'unspecified' ? 'light' : scheme];
+    const colors = Colors[scheme === 'dark' ? 'dark' :  'light'];
     const { tasks, add, toggle, remove } = useTasks();
     const { setBriefingTime } = useSettings();
     const [input, setInput] = useState('');
