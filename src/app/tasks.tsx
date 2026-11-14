@@ -18,7 +18,7 @@ import {extractDue} from '@/nlp/extractDue';
 
 export default function TasksScreen() {
     const scheme = useColorScheme();
-    const colors = Colors[scheme === 'unspecified' ? 'light' : scheme];
+    const colors = Colors[scheme === 'dark' ? 'dark' :  'light'];
 
     const {tasks, add, toggle, remove} = useTasks();
     const [input, setInput] = useState('');
